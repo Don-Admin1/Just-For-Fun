@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emoji Shower Effect</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+        body {
+            background: url('https://images.unsplash.com/photo-1614852200800-60c8e211c716?w=1600') no-repeat center center/cover;
+            background-color: #222; /* Fallback color */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            margin: 0;
+        }
+
+        .container {
+            position: relative;
+            font-family: Arial, sans-serif;
+            font-weight: bold;
+            font-size: 8vw; /* Adjusts based on screen width */
+            color: white;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+            text-align: center;
+        }
+
+        .emoji {
+            position: fixed;
+            font-size: 6vw; /* Smaller on mobile */
+            opacity: 0;
+            top: -50px; /* Start above the viewport */
+        }
+
+        /* Responsive Design for Smaller Screens */
+        @media (max-width: 768px) {
+            .container {
+                font-size: 10vw;
+            }
+            .emoji {
+                font-size: 8vw;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container" id="text">I was girl.!😂🔥</div>
+
+    <script>
+        const textElement = document.getElementById("text");
+
+        // Random entry directions
+        const startPositions = [
+            { x: "-100vw", y: "0" }, 
+            { x: "100vw", y: "0" }, 
+            { x: "0", y: "-100vh" }, 
+            { x: "0", y: "100vh" }
+        ];
+        const randomStart = startPositions[Math.floor(Math.random() * startPositions.length)];
+
+        // Animate text entering from a random side
+        gsap.fromTo(textElement, 
+            { x: randomStart.x, y: randomStart.y, opacity: 0 }, 
+            { x: 0, y: 0, opacity: 1, duration: 1.2, ease: "power2.out",
+                onComplete: () => {
+                    // Smoke effect (fade out)
+                    gsap.to(textElement, { opacity: 0, scale: 1.5, duration: 2, ease: "power2.out",
+                        onComplete: () => {
+                            textElement.innerHTML = "🤣🤣🤣";
+                            gsap.to(textElement, { opacity: 1, duration: 1 });
+                            emojiShower(); // Start the emoji shower effect
+                            popEmojis(); // Pop emojis randomly
+                        }
+                    });
+                }
+            }
+        );
+
+        function emojiShower() {
+            const emojis = ["🤣", "🔥", "💀", "😂", "😜", "🤪", "😆", "🎉"];
+            
+            for (let i = 0; i < 30; i++) { // Reduced emoji count for mobile
+                let emoji = document.createElement("div");
+                emoji.className = "emoji";
+                emoji.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+                document.body.appendChild(emoji);
+
+                let xPos = Math.random() * window.innerWidth; // Random X position
+                emoji.style.left = `${xPos}px`;
+
+                gsap.to(emoji, { 
+                    opacity: 1, 
+                    y: window.innerHeight + 50, // Move emoji down past the screen
+                    rotation: Math.random() * 360, // Random rotation
+                    duration: 2 + Math.random() * 2, // Faster on mobile (2-4 sec)
+                    ease: "linear",
+                    onComplete: () => emoji.remove() // Remove emoji after animation
+                });
+            }
+        }
+
+        function popEmojis() {
+            const emojis = ["🤣", "🔥", "💀", "😂", "😜", "🤪", "😆", "🎉"];
+            for (let i = 0; i < 15; i++) {  // Reduced for better performance
+                let emoji = document.createElement("div");
+                emoji.className = "emoji";
+                emoji.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+                document.body.appendChild(emoji);
+
+                let xPos = Math.random() * window.innerWidth;
+                let yPos = Math.random() * window.innerHeight;
+                
+                emoji.style.left = `${xPos}px`;
+                emoji.style.top = `${yPos}px`;
+
+                gsap.to(emoji, { 
+                    opacity: 1, 
+                    scale: 1.5, 
+                    y: -50,  // Moves emoji slightly upwards
+                    duration: 0.5, 
+                    delay: Math.random() * 0.5, 
+                    onComplete: () => {
+                        gsap.to(emoji, { opacity: 0, scale: 0.5, duration: 1, delay: 1, 
+                            onComplete: () => emoji.remove() // Removes emoji after animation
+                        });
+                    }
+                });
+            }
+        }
+    </script>
+
+</body>
+</html>
